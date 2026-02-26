@@ -1,4 +1,4 @@
-# Project Tools ⚡
+# Windows automations ⚡
 
 Because I got tired of doing this every single day:
 
