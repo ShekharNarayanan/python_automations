@@ -82,7 +82,7 @@ Installation link: https://docs.astral.sh/uv/getting-started/installation/
 ## 1) Clone the repo
 
 ``` powershell
-git clone <REPO_URL> C:\some\path\project-tools
+git clone https://github.com/ShekharNarayanan/windows_automations.git
 ```
 
 ------------------------------------------------------------------------
