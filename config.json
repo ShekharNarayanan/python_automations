@@ -1,0 +1,6 @@
+{ "root": "C:\\Users\\narayana\\projects",
+  "personal_subdir": "personal",
+  "default_scope": "work",
+  "vscode_command": "code",
+  "venv_activate_cmd": ".venv\\Scripts\\activate.bat"
+}
