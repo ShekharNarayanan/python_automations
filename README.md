@@ -100,15 +100,15 @@ Then new projects are created inside either the `work` or `personal` folder. Def
 
 
 Example:
-
+Feel free to change where you wish to save you stuff. For me, the default folders are projects (home base) and from there on I go to either personal or work folders. All three are customisable.
 ``` json
 {
-  "repo_path": "C:\\some\\path\\windows_automation", # path for repository
-  "root": "C:\\Users\\<your_user>\\projects", # this is where you save your projects (work or personal)
+  "root": "%USERPROFILE%/projects",
+  "work_subdir": "work",
   "personal_subdir": "personal",
   "default_scope": "work",
   "vscode_command": "code",
-  "venv_activate_cmd": ".venv\\Scripts\\activate.bat"
+  "venv_activate_cmd": ".venv/Scripts/activate.bat"
 }
 ```
 
@@ -141,11 +141,10 @@ New-Item -ItemType File -Force -Path $PROFILE
 notepad $PROFILE
 ```
 
-Add this line:
+In your file explorer, copy the complete path to the repository and paste it in your profile script as such:
 
 ``` powershell
-$cfg = Get-Content "$HOME\.project_tools.json" -Raw | ConvertFrom-Json
-. (Join-Path $cfg.repo_path "project-tools.ps1")
+. "C:\Users\narayana\projects\personal\windows_automations\project-tools.ps1"
 ```
 
 Save and restart PowerShell.

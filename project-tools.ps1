@@ -1,66 +1,79 @@
 # project-tools.ps1
-# Loads config from $HOME\.project_tools.json (bootstraps from repo's project-tools.json if missing)
-# Provides: make, open
+# Repo-first config + commands:
+#   make new_project <name> [work|personal]
+#   open <name> [work|personal] [pull]
+#
+# Config file must live next to this script: $PSScriptRoot\config.json
 
-function Get-ProjectToolsConfig {
-    $homeCfg = Join-Path $HOME ".project_tools.json"
-
-    if (!(Test-Path $homeCfg)) {
-        $repoCfg = Join-Path $PSScriptRoot "project-tools.json"
-        if (Test-Path $repoCfg) {
-            Copy-Item -Force $repoCfg $homeCfg
-            Write-Host "Created config at $homeCfg (copied from repo). Update paths inside it."
-        } else {
-            throw "Missing config. Create $homeCfg (and/or add project-tools.json next to project-tools.ps1)."
-        }
-    }
-
-    return (Get-Content $homeCfg -Raw | ConvertFrom-Json)
+# --- Load config once (on import) ---
+$script:CfgPath = Join-Path $PSScriptRoot "config.json"
+if (!(Test-Path $script:CfgPath)) {
+    throw "Missing config.json next to project-tools.ps1. Expected: $script:CfgPath"
 }
+$script:Cfg = Get-Content $script:CfgPath -Raw | ConvertFrom-Json
+
 
 function Resolve-ProjectPath {
-    param([Parameter(Mandatory=$true)][string]$name, [string]$scope)
+    param(
+        [Parameter(Mandatory = $true)][string]$name,
+        [string]$scope
+    )
 
-    $cfg = Get-ProjectToolsConfig
-
-    if ([string]::IsNullOrWhiteSpace($scope)) { $scope = $cfg.default_scope }
+    if ([string]::IsNullOrWhiteSpace($scope)) { $scope = $script:Cfg.default_scope }
     if ($scope -ne 'work' -and $scope -ne 'personal') { throw "Scope must be: work or personal" }
 
-    $root = $cfg.root
-    $personalSubdir = $cfg.personal_subdir
+    $root = [Environment]::ExpandEnvironmentVariables($script:Cfg.root)
+    $workSubdir = $script:Cfg.work_subdir
+    $personalSubdir = $script:Cfg.personal_subdir
 
-    if ($scope -eq 'personal') {
-        return (Join-Path (Join-Path $root $personalSubdir) $name)
-    } else {
-        return (Join-Path $root $name)
-    }
+    $base =
+        if ($scope -eq 'work')     { Join-Path $root $workSubdir }
+        else                      { Join-Path $root $personalSubdir }
+
+    return (Join-Path $base $name)
 }
 
 function open {
     param(
         [string]$name,
-        [string]$scope
+        [string]$scope,
+        [string]$action
     )
 
     if ([string]::IsNullOrWhiteSpace($name)) {
-        Write-Host "Usage: open <project_name> [work|personal]"
+        Write-Host "Usage: open <project_name> [work|personal] [pull]"
         return
     }
 
-    $cfg = Get-ProjectToolsConfig
-    if ([string]::IsNullOrWhiteSpace($scope)) { $scope = $cfg.default_scope }
+    if ([string]::IsNullOrWhiteSpace($scope)) { $scope = $script:Cfg.default_scope }
 
     $project = Resolve-ProjectPath $name $scope
+
     if (!(Test-Path $project)) {
         Write-Host "No such project: $project"
         return
     }
 
+    # Optional: git pull
+    if ($action -eq "pull") {
+        if (Test-Path (Join-Path $project ".git")) {
+            if (Get-Command git -ErrorAction SilentlyContinue) {
+                Push-Location $project
+                git pull
+                Pop-Location
+            } else {
+                Write-Host "git not found on PATH."
+            }
+        } else {
+            Write-Host "Not a git repository: $project"
+        }
+    }
+
     # VS Code
-    & $cfg.vscode_command $project | Out-Null
+    & $script:Cfg.vscode_command $project | Out-Null
 
     # CMD + activate venv (if it exists)
-    $activate = $cfg.venv_activate_cmd
+    $activate = $script:Cfg.venv_activate_cmd
     $cmd = "cd /d `"$project`" && if exist `"$activate`" call `"$activate`""
     Start-Process cmd -ArgumentList '/k', $cmd
 }
@@ -77,8 +90,7 @@ function make {
         return
     }
 
-    $cfg = Get-ProjectToolsConfig
-    if ([string]::IsNullOrWhiteSpace($scope)) { $scope = $cfg.default_scope }
+    if ([string]::IsNullOrWhiteSpace($scope)) { $scope = $script:Cfg.default_scope }
 
     $proj = Resolve-ProjectPath $name $scope
     $base = Split-Path $proj -Parent
