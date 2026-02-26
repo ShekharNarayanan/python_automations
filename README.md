@@ -1,13 +1,19 @@
-# Windows automations 
+# Python automations: 
+**NOTE**: Currently only working for a Windows x VSCODE + UV setup
 
 <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExOTE3eWEyYWczbmZyZWp4MWZ4ZGY5a2RuYnBhcmxoZjU3dndocjNhYSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/26ufnwz3wDUli7GU0/giphy.gif" width="400" />
 
-1. This repository is for 🌟**you**⭐ if you find yourself juggling multiple projects at work and want to build on some personal ones too.
+**This repository is for 🌟**you**🌟 if**:
 
-2. Basically: several projects, each requiring the same set of steps. Oh, and you like working with the terminal.
+1. You find yourself juggling multiple python projects at work and want to build on some personal ones too. Basically: several projects, each requiring the same set of setup steps. 
 
-3. This is so you can be lazy about things that are boring. 
+2. You don't want to compromise on best software development practices even for smaller projects. Think of reduced technical debt **right away**.
 
+3. You want to automate. Right now.
+
+4. You're cool and like to work with the terminal 😎
+
+**Pain point** : 
 Everytime I want to create a new python project or I wanna get back to an existing project I:
 ```
 1.  Open terminal
@@ -21,7 +27,7 @@ Everytime I want to create a new python project or I wanna get back to an existi
 **AND THEN**  
 1. `Open VS Code`
 
-**No more. This repo lets you turn on your computer and get to work in less than a minute.**
+**No more. This repo lets you turn on your computer and get to work in a structured way in less than a minute.**
 
 ------------------------------------------------------------------------
 # What This Does
@@ -36,10 +42,10 @@ make new_project <name> [work|personal]
 This automatically:
 
 -   Creates the correct folder based on paths you predefine
--   Runs `uv init`
--   Runs `uv venv`
--   Opens VS Code
--   Opens CMD with the virtual environment activated
+-   Runs `uv init` - **Initialize project tree**
+-   Runs `uv venv` - **Make environment**
+-   Opens VS Code - **Your editor is open with your project folder**
+-   Opens CMD with the virtual environment activated - **Your're ready for  `python -m main` in seconds. Every time.**
 
 2. `open project`
 ```powershell
@@ -82,7 +88,7 @@ Installation link: https://docs.astral.sh/uv/getting-started/installation/
 ## 1) Clone the repo
 
 ``` powershell
-git clone https://github.com/ShekharNarayanan/windows_automations.git
+git clone https://github.com/ShekharNarayanan/python_automations.git
 ```
 
 ------------------------------------------------------------------------
@@ -100,7 +106,7 @@ Then new projects are created inside either the `work` or `personal` folder. Def
 
 
 Example:
-Feel free to change where you wish to save you stuff. For me, the default folders are projects (home base) and from there on I go to either personal or work folders. All three are customisable.
+
 ``` json
 {
   "root": "%USERPROFILE%/projects",
@@ -144,7 +150,7 @@ notepad $PROFILE
 In your file explorer, copy the complete path to the repository and paste it in your profile script as such:
 
 ``` powershell
-. "C:\Users\narayana\projects\personal\windows_automations\project-tools.ps1"
+. "C:\Users\narayana\projects\personal\python_automations\project-tools.ps1"
 ```
 
 Save and restart PowerShell.
