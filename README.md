@@ -1,37 +1,138 @@
-# Project Tools (PowerShell)
+# Project Tools ⚡
 
-Automate project creation and opening with uv + VS Code.
+Because I got tired of doing this every single day:
 
-Provides two commands:
+1.  Open terminal\
+2.  Navigate to some buried folder\
+3.  `cd` into project\
+4.  Open VS Code\
+5.  Activate virtual environment
 
--   `make new_project <name> [work|personal]`
--   `open <name> [work|personal]`
+It's not hard.\
+It's just repetitive.
 
-------------------------------------------------------------------------
-
-## Scope Behavior
-
--   **work** → `<root>\<project_name>`
--   **personal** → `<root>\<personal_subdir>\<project_name>`
-
-Defaults are defined in the config file.
+And repetition is automation waiting to happen.
 
 ------------------------------------------------------------------------
 
-## Requirements
+## What This Does
 
--   Python installed
--   `uv` installed and on PATH
--   VS Code installed
--   `code` CLI available on PATH\
-    (VS Code → Command Palette → *Shell Command: Install 'code' command
-    in PATH*)
+Adds two simple commands to PowerShell:
+
+``` powershell
+make new_project <name> [work|personal]
+open <name> [work|personal]
+```
+
+That's it.
+
+No manual navigation.\
+No remembering paths.\
+No typing `cd` five times.
 
 ------------------------------------------------------------------------
 
-## Installation
+## Why This Exists
 
-### 1. Allow PowerShell profile execution
+If you create projects often, you know the friction:
+
+-   Projects live in structured folders\
+-   Some are work-related\
+-   Some are personal\
+-   Each needs a proper `uv` setup\
+-   Each needs its own `.venv`\
+-   Each needs VS Code\
+-   Each needs activation
+
+This tool removes all of that.
+
+You think about the project.\
+Not the filesystem.
+
+------------------------------------------------------------------------
+# What you need:
+
+## 1. VS Code
+
+You need Visual Studio Code installed.
+
+You also need the `code` command available in your terminal.
+
+Open VS Code → press `Ctrl + Shift + P` → run:
+
+Shell Command: Install 'code' command in PATH
+
+Then restart PowerShell.
+
+Verify:
+
+```powershell
+code --version
+```
+
+## 2. UV
+
+UV is a python dependency manager. It is fast (and awesome) and easy to configure.
+
+Installation link: https://docs.astral.sh/uv/getting-started/installation/
+------------------------------------------------------------------------
+
+# How It Works
+
+You define paths once in a config file.
+
+After that:
+
+### Create a project
+
+``` powershell
+make new_project api work
+make new_project side_hustle personal
+```
+
+This automatically:
+
+-   Creates the correct folder
+-   Runs `uv init`
+-   Runs `uv venv`
+-   Opens VS Code
+-   Opens CMD with the virtual environment activated
+
+------------------------------------------------------------------------
+
+### Open an existing project
+
+``` powershell
+open api work
+open side_hustle personal
+```
+
+This:
+
+-   Opens VS Code
+-   Opens CMD
+-   Activates `.venv` if it exists
+
+------------------------------------------------------------------------
+
+# Scope Behavior
+
+Your config defines a root directory, for example:
+
+    C:\Users\<you>\projects
+
+Then:
+
+-   `work` → `C:\Users\<you>\projects\work\<project>`
+-   `personal` → `C:\Users\<you>\projects\personal\<project>`
+
+Default scope is configurable.
+
+------------------------------------------------------------------------
+
+# Installation
+
+## 1) Allow PowerShell profiles
 
 Run once:
 
@@ -41,7 +142,7 @@ Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
 
 ------------------------------------------------------------------------
 
-### 2. Clone the repository
+## 2) Clone the repo
 
 ``` powershell
 git clone <REPO_URL> C:\some\path\project-tools
@@ -49,22 +150,22 @@ git clone <REPO_URL> C:\some\path\project-tools
 
 ------------------------------------------------------------------------
 
-### 3. Add profile loader
+## 3) Add loader to your PowerShell profile
 
-Open your PowerShell profile:
+Open your profile:
 
 ``` powershell
 notepad $PROFILE
 ```
 
-If the file does not exist, create it:
+If it does not exist:
 
-``` powersshell
+``` powershell
 New-Item -ItemType File -Force -Path $PROFILE
 notepad $PROFILE
 ```
 
-Add this line to your profile:
+Add this line:
 
 ``` powershell
 $cfg = Get-Content "$HOME\.project_tools.json" -Raw | ConvertFrom-Json
@@ -75,18 +176,18 @@ Save and restart PowerShell.
 
 ------------------------------------------------------------------------
 
-### 4. Configure paths
+## 4) Modify the config file
 
-Open this file:
+Open:
 
-    C:\Users\<your_user>\.project_tools.json
+    C:\Users\<your_user>\config.json
 
 Example:
 
 ``` json
 {
-  "repo_path": "C:\\some\\path\\project-tools",
-  "root": "C:\\Users\\<your_user>\\projects",
+  "repo_path": "C:\\some\\path\\windows_automation",
+  "root": "C:\\Users\\<your_user>\\projects", # this is where you save your projects work or personal
   "personal_subdir": "personal",
   "default_scope": "work",
   "vscode_command": "code",
@@ -94,61 +195,22 @@ Example:
 }
 ```
 
-Update paths accordingly.
+Update paths to match your system.
 
 ------------------------------------------------------------------------
 
-## Usage
+# Updating
 
-Create a new project:
-
-``` powershell
-make new_project myapp work
-make new_project sideproject personal
-```
-
-Open an existing project:
-
-``` powershell
-open myapp work
-open sideproject personal
-```
-
-------------------------------------------------------------------------
-
-## What Happens
-
-`make` will:
-
--   Create the directory in the correct scope
--   Run `uv init`
--   Run `uv venv`
--   Open VS Code
--   Open CMD with the virtual environment activated
-
-`open` will:
-
--   Open VS Code
--   Open CMD in the project directory
--   Activate `.venv` if it exists
-
-------------------------------------------------------------------------
-
-## Updating
-
-To update the tool:
+When the repo changes:
 
 ``` powershell
 cd <repo_path>
 git pull
 ```
 
-No changes to your PowerShell profile required.
+No profile changes required.
 
 ------------------------------------------------------------------------
 
-## Notes
 
--   Default scope is controlled by `default_scope` in config.
--   All paths are centralized in `config.json`.
--   This keeps the PowerShell profile clean and portable.
+
