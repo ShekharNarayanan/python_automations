@@ -1,69 +1,69 @@
-# Windows automations ⚡
+# Windows automations 
 
-Because I got tired of doing this every single day:
+<img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExOTE3eWEyYWczbmZyZWp4MWZ4ZGY5a2RuYnBhcmxoZjU3dndocjNhYSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/26ufnwz3wDUli7GU0/giphy.gif" width="400" />
 
-1.  Open terminal\
-2.  Navigate to some buried folder\
-3.  `cd` into project\
-4.  Open VS Code\
-5.  Activate virtual environment
+1. This repository is for 🌟**you**⭐ if you find yourself juggling multiple projects at work and want to build on some personal ones too.
 
-It's not hard.\
-It's just repetitive.
+2. Basically: several projects, each requiring the same set of steps. Oh, and you like working with the terminal.
 
-And repetition is automation waiting to happen.
+3. This is so you can be lazy about things that are boring. 
+
+Everytime I want to create a new python project or I wanna get back to an existing project I:
+```
+1.  Open terminal
+2.  Navigate to some buried folder
+3.  `cd` into project
+4.  Create project tree
+5.  Create virtual env
+6.  Activate virtual environment
+```
+
+**AND THEN**  
+1. `Open VS Code`
+
+**No more. This repo lets you turn on your computer and get to work in less than a minute.**
 
 ------------------------------------------------------------------------
-## What This Does
+# What This Does
 
 Adds two simple commands to PowerShell:
 
-``` powershell
+1. `Make new_project`
+```powershell
 make new_project <name> [work|personal]
+```
+
+This automatically:
+
+-   Creates the correct folder based on paths you predefine
+-   Runs `uv init`
+-   Runs `uv venv`
+-   Opens VS Code
+-   Opens CMD with the virtual environment activated
+
+2. `open project`
+```powershell
 open <name> [work|personal]
 ```
 
-That's it.
+This automatically:
 
-No manual navigation.\
-No remembering paths.\
-No typing `cd` five times.
+-   Opens VS Code
+-   Opens CMD
+-   Activates `.venv` if it exists
 
-------------------------------------------------------------------------
-
-## Why This Exists
-
-If you create projects often, you know the friction:
-
--   Projects live in structured folders\
--   Some are work-related\
--   Some are personal\
--   Each needs a proper `uv` setup\
--   Each needs its own `.venv`\
--   Each needs VS Code\
--   Each needs activation
-
-This tool removes all of that.
-
-You think about the project.\
-Not the filesystem.
 
 ------------------------------------------------------------------------
 # Installation:
 
 ## 1. VS Code
 
-You need Visual Studio Code installed.
+1. Install Visual Studio Code installed.
 
-You also need the `code` command available in your terminal.
-
-Open VS Code → press `Ctrl + Shift + P` → run:
-
+2. Make the `code` command available in your terminal. Open VS Code → press `Ctrl + Shift + P` → run:
 Shell Command: Install 'code' command in PATH
 
-Then restart PowerShell.
-
-Verify:
+3. To verify, open powershell and paste the following:
 
 ```powershell
 code --version
@@ -88,11 +88,12 @@ git clone <REPO_URL> C:\some\path\project-tools
 ------------------------------------------------------------------------
 
 ## 2) Modify the config file
+
 Open config.json and set paths as you want to. Your config defines a root directory, for example:
 
     C:\Users\<you>\projects
 
-Then:
+Then new projects are created inside either the `work` or `personal` folder. Default is `work`. Feel free to change this to whatever suits you best.:
 
 -   `work` → `C:\Users\<you>\projects\work\<project>`
 -   `personal` → `C:\Users\<you>\projects\personal\<project>`
@@ -166,15 +167,6 @@ OR
 ```powershell
 make new_project side_hustle personal
 ```
-
-This automatically:
-
--   Creates the correct folder
--   Runs `uv init`
--   Runs `uv venv`
--   Opens VS Code
--   Opens CMD with the virtual environment activated
-
 ------------------------------------------------------------------------
 
 ### Open an existing python project
@@ -187,13 +179,6 @@ OR
 ```
 open side_hustle personal
 ```
-
-This:
-
--   Opens VS Code
--   Opens CMD
--   Activates `.venv` if it exists
-
 ------------------------------------------------------------------------
 
 # Updating
