@@ -14,7 +14,6 @@ It's just repetitive.
 And repetition is automation waiting to happen.
 
 ------------------------------------------------------------------------
-
 ## What This Does
 
 Adds two simple commands to PowerShell:
@@ -50,7 +49,7 @@ You think about the project.\
 Not the filesystem.
 
 ------------------------------------------------------------------------
-# What you need:
+# Installation:
 
 ## 1. VS Code
 
@@ -75,49 +74,21 @@ code --version
 UV is a python dependency manager. It is fast (and awesome) and easy to configure.
 
 Installation link: https://docs.astral.sh/uv/getting-started/installation/
+
+
+# Configuring everything before usage 
 ------------------------------------------------------------------------
 
-# How It Works
-
-You define paths once in a config file.
-
-After that:
-
-### Create a project
+## 1) Clone the repo
 
 ``` powershell
-make new_project api work
-make new_project side_hustle personal
+git clone <REPO_URL> C:\some\path\project-tools
 ```
-
-This automatically:
-
--   Creates the correct folder
--   Runs `uv init`
--   Runs `uv venv`
--   Opens VS Code
--   Opens CMD with the virtual environment activated
 
 ------------------------------------------------------------------------
 
-### Open an existing project
-
-``` powershell
-open api work
-open side_hustle personal
-```
-
-This:
-
--   Opens VS Code
--   Opens CMD
--   Activates `.venv` if it exists
-
-------------------------------------------------------------------------
-
-# Scope Behavior
-
-Your config defines a root directory, for example:
+## 2) Modify the config file
+Open config.json and set paths as you want to. Your config defines a root directory, for example:
 
     C:\Users\<you>\projects
 
@@ -126,13 +97,24 @@ Then:
 -   `work` → `C:\Users\<you>\projects\work\<project>`
 -   `personal` → `C:\Users\<you>\projects\personal\<project>`
 
-Default scope is configurable.
+
+Example:
+
+``` json
+{
+  "repo_path": "C:\\some\\path\\windows_automation", # path for repository
+  "root": "C:\\Users\\<your_user>\\projects", # this is where you save your projects (work or personal)
+  "personal_subdir": "personal",
+  "default_scope": "work",
+  "vscode_command": "code",
+  "venv_activate_cmd": ".venv\\Scripts\\activate.bat"
+}
+```
+
 
 ------------------------------------------------------------------------
 
-# Installation
-
-## 1) Allow PowerShell profiles
+## 3) Allow PowerShell profiles
 
 Run once:
 
@@ -142,15 +124,8 @@ Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
 
 ------------------------------------------------------------------------
 
-## 2) Clone the repo
 
-``` powershell
-git clone <REPO_URL> C:\some\path\project-tools
-```
-
-------------------------------------------------------------------------
-
-## 3) Add loader to your PowerShell profile
+## 5) Add loader to your PowerShell profile
 
 Open your profile:
 
@@ -174,28 +149,50 @@ $cfg = Get-Content "$HOME\.project_tools.json" -Raw | ConvertFrom-Json
 
 Save and restart PowerShell.
 
+
 ------------------------------------------------------------------------
 
-## 4) Modify the config file
+# Usage 
 
-Open:
+### Creating a new python project
 
-    C:\Users\<your_user>\config.json
+Open powershell and:
 
-Example:
+``` powershell
+make new_project api work
+```
+OR 
 
-``` json
-{
-  "repo_path": "C:\\some\\path\\windows_automation",
-  "root": "C:\\Users\\<your_user>\\projects", # this is where you save your projects work or personal
-  "personal_subdir": "personal",
-  "default_scope": "work",
-  "vscode_command": "code",
-  "venv_activate_cmd": ".venv\\Scripts\\activate.bat"
-}
+```powershell
+make new_project side_hustle personal
 ```
 
-Update paths to match your system.
+This automatically:
+
+-   Creates the correct folder
+-   Runs `uv init`
+-   Runs `uv venv`
+-   Opens VS Code
+-   Opens CMD with the virtual environment activated
+
+------------------------------------------------------------------------
+
+### Open an existing python project
+
+``` powershell
+open api work
+```
+
+OR
+```
+open side_hustle personal
+```
+
+This:
+
+-   Opens VS Code
+-   Opens CMD
+-   Activates `.venv` if it exists
 
 ------------------------------------------------------------------------
 
