@@ -1,5 +1,7 @@
 # tests/project-tools.Tests.ps1
 # Pester v5+
+# Creates a per-run temp config.json next to project-tools.ps1 (and restores yours after).
+# Does NOT use or create tests/dummy_config.json.
 
 BeforeAll {
     $script:Here = Split-Path -Parent $PSCommandPath
@@ -9,38 +11,35 @@ BeforeAll {
     $script:ScriptPath = Join-Path $script:Repo "project-tools.ps1"
     $script:CfgTarget  = Join-Path (Split-Path $script:ScriptPath -Parent) "config.json"
     $script:CfgBackup  = "$script:CfgTarget.bak"
-    $script:DummyCfg   = Join-Path $script:Here "dummy_config.json"
 
     # Unique temp root for this test run
     $script:TmpRoot = Join-Path $env:TEMP ("projtools_" + [guid]::NewGuid().ToString("N"))
     New-Item -ItemType Directory -Force -Path $script:TmpRoot | Out-Null
 
-    # Ensure we have a dummy config (kept inside tests/)
-    if (!(Test-Path $script:DummyCfg)) {
-        $dummy = @{
-            root = $script:TmpRoot
-            default_scope = "work"
-            work_subdir = "work"
-            personal_subdir = "personal"
-            vscode_command = "code"
-            venv_activate_cmd = "dummy\act.bat"
-        } | ConvertTo-Json -Depth 10
-        Set-Content -Path $script:DummyCfg -Value $dummy -Encoding UTF8
-    }
-
-    # Backup real config.json if present, then swap in dummy
+    # Backup real config.json if present
     $script:HadOriginalCfg = Test-Path $script:CfgTarget
     if ($script:HadOriginalCfg) {
         Copy-Item $script:CfgTarget $script:CfgBackup -Force
     }
-    Copy-Item $script:DummyCfg $script:CfgTarget -Force
+
+    # Write per-run dummy config.json next to the script under test
+    $cfg = @{
+        vscode_command   = "code"
+        work_subdir      = "work"
+        personal_subdir  = "personal"
+        default_scope    = "work"
+        root             = $script:TmpRoot
+        venv_activate_cmd = "dummy\act.bat"
+    } | ConvertTo-Json -Depth 10
+
+    Set-Content -Path $script:CfgTarget -Value $cfg -Encoding UTF8
 
     # Import script under test (it will load config.json next to it)
     . $script:ScriptPath
 }
 
 AfterAll {
-    # Restore original config.json (or remove dummy if none existed)
+    # Restore original config.json (or remove the temp one if none existed)
     if (Test-Path $script:CfgBackup) {
         Move-Item $script:CfgBackup $script:CfgTarget -Force
     } elseif (Test-Path $script:CfgTarget) {
@@ -76,7 +75,7 @@ Describe "project-tools.ps1" {
         make new_project "myproj" "work"
 
         $proj = Join-Path (Join-Path $script:TmpRoot "work") "myproj"
-        (Test-Path $proj) | Should -BeTrue
+        Test-Path $proj | Should -BeTrue
 
         Assert-MockCalled uv -Times 2
         Assert-MockCalled code -Times 1
