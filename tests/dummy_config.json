@@ -1,0 +1,8 @@
+﻿{
+    "vscode_command":  "code",
+    "work_subdir":  "work",
+    "personal_subdir":  "personal",
+    "default_scope":  "work",
+    "root":  "C:\\Users\\narayana\\AppData\\Local\\Temp\\projtools_438905e064a64bc8b0ce9b36b18bb8c8",
+    "venv_activate_cmd":  "dummy\\act.bat"
+}
