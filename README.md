@@ -1,5 +1,6 @@
 # Python automations: 
 **NOTE**: Currently only working for a Windows x VSCODE + UV setup
+
 **NEW** : `git init` and `git pull` added to set of automations (optional)
 
 <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExOTE3eWEyYWczbmZyZWp4MWZ4ZGY5a2RuYnBhcmxoZjU3dndocjNhYSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/26ufnwz3wDUli7GU0/giphy.gif" width="400" />
