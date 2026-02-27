@@ -35,7 +35,17 @@ BeforeAll {
     Set-Content -Path $script:CfgTarget -Value $cfg -Encoding UTF8
 
     # Import script under test (it will load config.json next to it)
-    . $script:ScriptPath
+    Describe "project-tools.ps1" {
+
+    BeforeAll {
+        . $script:ScriptPath
+    }
+
+    BeforeEach {
+        Mock uv { }
+        Mock Start-Process { }
+        Mock -CommandName code { }
+    }
 }
 
 AfterAll {
