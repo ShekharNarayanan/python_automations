@@ -41,11 +41,13 @@ function open {
     )
 
     if ([string]::IsNullOrWhiteSpace($name)) {
-        Write-Host "Usage: open <project_name> [work|personal] [pull]"
+        Write-Host "Usage: open <project_name> [work|personal] [git-pull]"
         return
     }
 
-    if ([string]::IsNullOrWhiteSpace($scope)) { $scope = $script:Cfg.default_scope }
+    if ([string]::IsNullOrWhiteSpace($scope)) {
+        $scope = $script:Cfg.default_scope
+    }
 
     $project = Resolve-ProjectPath $name $scope
 
@@ -54,27 +56,19 @@ function open {
         return
     }
 
-    # Optional: git pull
-    if ($action -eq "pull") {
-        if (Test-Path (Join-Path $project ".git")) {
-            if (Get-Command git -ErrorAction SilentlyContinue) {
-                Push-Location $project
-                git pull
-                Pop-Location
-            } else {
-                Write-Host "git not found on PATH."
-            }
-        } else {
-            Write-Host "Not a git repository: $project"
-        }
-    }
-
     # VS Code
     & $script:Cfg.vscode_command $project | Out-Null
 
-    # CMD + activate venv (if it exists)
+    # Build CMD command string
     $activate = $script:Cfg.venv_activate_cmd
-    $cmd = "cd /d `"$project`" && if exist `"$activate`" call `"$activate`""
+    $cmd = "cd /d `"$project`""
+
+    if ($action -eq "git-pull") {
+    $cmd += " && if exist .git (echo. && echo ################################################## && echo ##########   PULLING DATA FROM GIT   ########## && echo ################################################## && echo. && git pull)"
+    }
+
+    $cmd += " && if exist `"$activate`" call `"$activate`""
+
     Start-Process cmd -ArgumentList '/k', $cmd
 }
 
@@ -90,12 +84,13 @@ function make {
         return
     }
 
-    if ([string]::IsNullOrWhiteSpace($scope)) { $scope = $script:Cfg.default_scope }
+    if ([string]::IsNullOrWhiteSpace($scope)) {
+        $scope = $script:Cfg.default_scope
+    }
 
     $proj = Resolve-ProjectPath $name $scope
     $base = Split-Path $proj -Parent
 
-    # Ensure base exists (esp. personal subdir)
     New-Item -ItemType Directory -Force -Path $base | Out-Null
 
     if (Test-Path $proj) {
@@ -111,6 +106,22 @@ function make {
     uv venv
     Pop-Location
 
-    open $name $scope
+    # VS Code
+    & $script:Cfg.vscode_command $proj | Out-Null
+
+    # CMD launch
+    $activate = $script:Cfg.venv_activate_cmd
+    $cmdLine = "cd /d `"$proj`""
+
+    $cmdLine += " && if exist .git (echo. && echo ##################################################"
+    $cmdLine += " && echo ##########   GIT REPOSITORY INITIALIZED BY UV   ##########"
+    $cmdLine += " && echo ################################################## && echo.)"
+
+    $cmdLine += " && if exist `"$activate`" call `"$activate`""
+
+    Start-Process cmd -ArgumentList '/k', $cmdLine
+
+    Write-Host ""
     Write-Host "Created $scope project at $proj"
+    Write-Host ""
 }
