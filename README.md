@@ -55,8 +55,8 @@ This automatically:
 
  **You're ready for python -m main in seconds.**
 
-![](media\make_ps.PNG)
-![](media\make_cmd.PNG)
+![](media/make_ps.PNG)
+![](media/make_cmd.PNG)
 
 2. `open project`
 ```powershell
@@ -70,8 +70,8 @@ This automatically:
 -   Activates `.venv` if it exists
 -   Executes `git pull` in the cmdline 
 
-![](media\open_ps.PNG)
-![](media\open_cmd.PNG)
+![](media/open_ps.PNG)
+![](media/open_cmd.PNG)
 ------------------------------------------------------------------------
 # Installation:
 
