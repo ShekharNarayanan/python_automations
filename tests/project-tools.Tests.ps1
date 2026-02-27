@@ -59,7 +59,7 @@ Describe "project-tools.ps1" {
 
     BeforeEach {
         # Prevent any real side effects
-        Mock uv { }
+        Mock -CommandName uv -MockWith { }
         Mock Start-Process { }
         Mock -CommandName code { }
     }
