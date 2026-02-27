@@ -2,6 +2,7 @@
 # Pester v5+
 # Creates a per-run temp config.json next to project-tools.ps1 (and restores yours after).
 # Does NOT use or create tests/dummy_config.json.
+# Imports project-tools.ps1 inside Describe so mocks apply in CI.
 
 BeforeAll {
     $script:Here = Split-Path -Parent $PSCommandPath
@@ -24,28 +25,15 @@ BeforeAll {
 
     # Write per-run dummy config.json next to the script under test
     $cfg = @{
-        vscode_command   = "code"
-        work_subdir      = "work"
-        personal_subdir  = "personal"
-        default_scope    = "work"
-        root             = $script:TmpRoot
+        vscode_command    = "code"
+        work_subdir       = "work"
+        personal_subdir   = "personal"
+        default_scope     = "work"
+        root              = $script:TmpRoot
         venv_activate_cmd = "dummy\act.bat"
     } | ConvertTo-Json -Depth 10
 
     Set-Content -Path $script:CfgTarget -Value $cfg -Encoding UTF8
-
-    # Import script under test (it will load config.json next to it)
-    Describe "project-tools.ps1" {
-
-    BeforeAll {
-        . $script:ScriptPath
-    }
-
-    BeforeEach {
-        Mock uv { }
-        Mock Start-Process { }
-        Mock -CommandName code { }
-    }
 }
 
 AfterAll {
@@ -63,6 +51,11 @@ AfterAll {
 }
 
 Describe "project-tools.ps1" {
+
+    BeforeAll {
+        # Import script under test (it will load config.json next to it)
+        . $script:ScriptPath
+    }
 
     BeforeEach {
         # Prevent any real side effects
